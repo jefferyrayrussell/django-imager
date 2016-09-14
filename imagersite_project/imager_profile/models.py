@@ -1,11 +1,14 @@
+"""Creates the user profile of a simple Django image management website."""
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
-class ImagerProfile(models.Models):
-    # this line should link this model to djangos user model and delete the instance of this model
-    # when the link django user moddle is deleted
+class ImagerProfile(models.Model):
+    """Create a class of objects that serve as the Imager Profile model."""
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     camera_type = models.CharField('camera type', blank=True)
     address = models.CharField('address', blank=True)
@@ -14,18 +17,20 @@ class ImagerProfile(models.Models):
     facebook = models.URLField('facebook', blank=True)
 
     def active():
-        """make a database query for ImagerProfile's that are active in their User moddles"""
+        """Filter the active users as indicated in the User Profile."""
         users = User.objects.filter(is_active=True)
         return users.ImagerProfile
 
     def user_string(self):
-        """a visual representation that appropriately displays when using the Django shell"""
-        user = User.objects.filter(user=self.user)
-        string = "{} shoots {} with a {}".format(user.first_name, user.photography_type, user.camera_type)
+        """Provide a visual representation of the model."""
+        string = "{} shoots {} with a {}".format(self.user.first_name,
+                                                 self.user.photography_type,
+                                                 self.user.camera_type)
         return string
 
 
 @receiver(post_save, sender=User)
-def init_new_ImagerProfile:
-    """initialise a new instance of this class when a new instance of djangos user class is saved"""
-    ImagerProfile()
+def init_new_imager_profile(sender, instance):
+    """Initialise a new instance of Imager Profile."""
+    pro1 = ImagerProfile(instance)
+    pro1.save()
