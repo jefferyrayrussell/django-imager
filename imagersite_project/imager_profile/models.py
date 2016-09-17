@@ -6,23 +6,23 @@ from django.db.models.signals import post_save
 import uuid
 
 
-class ImagerProfile(models.Models):
+class ImagerProfile(models.Model):
     # links this model to djangos user model and delete the instance of this model
     # when the link django user moddle is deleted
-    user_id = models.UUIDField(
+    profile_id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    camera_type = models.CharField('camera type', blank=True)
-    address = models.CharField('address', blank=True)
+    camera_type = models.CharField('camera type', max_length=128, blank=True)
+    address = models.CharField('address', max_length=128, blank=True)
     website = models.URLField('website', blank=True)
-    photography_type = models.CharField('photography type', blank=True)
+    photography_type = models.CharField('photography type', max_length=128, blank=True)
     facebook = models.URLField('facebook', blank=True)
 
     @classmethod
     def active_users(cls):
-        '''make a bd query for ImagerProfile's that are active in their User moddles'''
+        '''make a bd query for ImagerProfile's that are active in their User models'''
         active_users = cls.objects.filter(user__is_active__exact=True)
         return active_users
 
